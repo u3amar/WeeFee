@@ -19,6 +19,10 @@ public class NetworkNode<T> {
         mChildren.add(child);
     }
 
+    public List<NetworkNode<T>> getChildren() {
+        return mChildren;
+    }
+
     public void setData(T data) {
         mData = data;
     }

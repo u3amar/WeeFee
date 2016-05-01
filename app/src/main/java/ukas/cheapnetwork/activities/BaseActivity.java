@@ -34,6 +34,7 @@ public class BaseActivity extends AppCompatActivity {
     public void cancelDialog() {
         if (mDialog != null) {
             mDialog.cancel();
+            mDialog = null;
         }
     }
 }

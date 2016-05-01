@@ -11,7 +11,6 @@ import android.util.Log;
 
 import java.util.List;
 
-import ukas.cheapnetwork.R;
 import ukas.cheapnetwork.utils.NetworkUtils;
 
 /**
@@ -45,7 +44,7 @@ public class ScanService extends IntentService {
             startScan();
         } else {
             String ssid = mWifiManager.getConnectionInfo().getSSID();
-            if (isDataShareHotspot(ssid)) {
+            if (NetworkUtils.isConnectedToWeeFeeNetwork(ssid, this)) {
                 onWiFiConnected();
             } else {
                 mWifiManager.disconnect();
@@ -57,8 +56,9 @@ public class ScanService extends IntentService {
     private void startScan() {
         mWifiManager.startScan();
         try {
-            connectToNearbyNetwork();
-            onWiFiConnected();
+            if (connectToNearbyNetwork()) {
+                onWiFiConnected();
+            }
         } catch (AccessPointConnectionException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -68,17 +68,21 @@ public class ScanService extends IntentService {
         DataUsageService.startService(this);
     }
 
-    public void connectToNearbyNetwork() throws AccessPointConnectionException {
+    public boolean connectToNearbyNetwork() throws AccessPointConnectionException {
         mWifiManager.setWifiEnabled(true);
 
         List<ScanResult> scanResults = mWifiManager.getScanResults();
         if (scanResults != null) {
             for (ScanResult scanResult : scanResults) {
-                if (isDataShareHotspot(scanResult.SSID) && isOpenNetwork(scanResult)) {
+                if (NetworkUtils.isConnectedToWeeFeeNetwork(scanResult.SSID, this)) {
                     connectToNetwork(scanResult.SSID);
                 }
             }
+
+            return false;
         }
+
+        return true;
     }
 
     public void connectToNetwork(String SSID) throws AccessPointConnectionException {
@@ -94,15 +98,6 @@ public class ScanService extends IntentService {
             Log.e(TAG, "Error connecting to network");
             throw new AccessPointConnectionException("Error connecting to WiFi network: " + SSID);
         }
-    }
-
-    public boolean isOpenNetwork(ScanResult scanResult) {
-        String capabilities = scanResult.capabilities;
-        return !capabilities.toUpperCase().contains("WEP") && !capabilities.toUpperCase().contains("WPA");
-    }
-
-    public boolean isDataShareHotspot(String SSID) {
-        return SSID.contains(getString(R.string.app_name));
     }
 
     public class AccessPointConnectionException extends Exception {

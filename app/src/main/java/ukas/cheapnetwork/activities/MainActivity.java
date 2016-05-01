@@ -15,7 +15,6 @@ import ukas.cheapnetwork.utils.NetworkUtils;
 import ukas.cheapnetwork.utils.Utils;
 
 public class MainActivity extends BaseActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +27,8 @@ public class MainActivity extends BaseActivity {
             startActivity(intent);
         }
 
-        if (NetworkUtils.isWiFiHotspotOn(this)) {
+        if ((NetworkUtils.isWiFiHotspotOn(this) || NetworkUtils.isWifiConnected(this))
+                && NetworkUtils.isConnectedToWeeFeeNetwork(this)) {
             onConnected();
         }
     }
@@ -55,12 +55,13 @@ public class MainActivity extends BaseActivity {
     @SuppressWarnings("unused")
     @OnClick(R.id.activity_main_become_receiver_button)
     public void onReceiverButtonClicked() {
-        showDefaultProgressDialog();
         ScanService.start(this);
     }
 
     public void onConnected() {
-        startActivity(new Intent(this, DataGraphActivity.class));
+        Intent dataGraphActivity = new Intent(this, DataGraphActivity.class);
+        startActivity(dataGraphActivity);
+        finish();
     }
 
     public void initNetworkChangeReceiver() {
@@ -71,7 +72,6 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (NetworkUtils.isWifiConnected(context)) {
-                cancelDialog();
                 onConnected();
             }
         }

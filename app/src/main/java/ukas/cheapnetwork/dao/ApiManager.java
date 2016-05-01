@@ -1,18 +1,17 @@
 package ukas.cheapnetwork.dao;
 
-import android.os.Handler;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import ukas.cheapnetwork.interfaces.NetworkCallback;
+import ukas.cheapnetwork.models.ConnectionInfo;
 import ukas.cheapnetwork.models.NetworkMonitor;
 import ukas.cheapnetwork.models.SSIDMapping;
 import ukas.cheapnetwork.models.TransmitInfo;
@@ -23,7 +22,8 @@ import ukas.cheapnetwork.models.TransmitInfo;
 public class ApiManager {
     private static final String ENDPOINT_BASE = "http://52.38.69.109/",
             ENDPOINT_CREATE_SSID_MAPPING = ENDPOINT_BASE + "create_SSID_mapping.php",
-            ENDPOINT_UPLOAD_DATA_TRANSFER = ENDPOINT_BASE + "data_transfers.php";
+            ENDPOINT_UPLOAD_DATA_TRANSFER = ENDPOINT_BASE + "data_transfers.php",
+            ENDPOINT_GET_CONNECTION_INFO = ENDPOINT_BASE + "get_connection_info.php";
 
     private static ApiManager mManager;
     private OkHttpClient mClient;
@@ -51,7 +51,7 @@ public class ApiManager {
                 .post(requestBody)
                 .build();
 
-        enqueueCall(request, callback);
+        new VoidRequestConsumer().enqueueCall(request, mClient, callback);
     }
 
     public void saveDataTransfer(NetworkMonitor monitor, final NetworkCallback<Void> callback) {
@@ -70,63 +70,36 @@ public class ApiManager {
                 .post(requestBody)
                 .build();
 
-        enqueueCall(request, callback);
+        new VoidRequestConsumer().enqueueCall(request, mClient, callback);
     }
 
-    private void enqueueCall(Request request, final NetworkCallback<Void> callback) {
-        Handler handler = new Handler();
-        mClient.newCall(request)
-                .enqueue(new MainThreadCallback<>(callback, handler));
-    }
+    public void getConnectionInfo(String ssid, final NetworkCallback<ConnectionInfo> callback) {
+        ssid = ssid.replaceAll("\"", "");
 
-    public class MainThreadCallback<T extends NetworkCallback> implements Callback {
-        private Handler mHandler;
-        private T mCallback;
+        Request request = new Request.Builder()
+                .url(ENDPOINT_GET_CONNECTION_INFO + "?ssid=" + ssid)
+                .build();
 
-        public MainThreadCallback(T callback, Handler handler) {
-            mHandler = handler;
-            mCallback = callback;
-        }
-
-        @Override
-        public void onFailure(Call call, final IOException e) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mCallback.onError(HttpURLConnection.HTTP_BAD_REQUEST, new Exception(e.getMessage()));
+        new RequestConsumer<ConnectionInfo>() {
+            @Override
+            public ConnectionInfo parseResponse(Response response) {
+                try {
+                    String responseString = response.body().string();
+                    Gson gson = new GsonBuilder().create();
+                    return gson.fromJson(responseString, ConnectionInfo.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
-        }
 
-        @Override
-        public void onResponse(Call call, final Response response) throws IOException {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (response.code() == HttpURLConnection.HTTP_OK) {
-                        mCallback.onSuccess(null);
-                    } else {
-                        mCallback.onError(response.code(), new ApiException("Error saving transmit info"));
-                    }
-                }
-            });
-        }
+                return null;
+            }
+        }.enqueueCall(request, mClient, callback);
     }
 
-    public class ApiException extends Exception {
-        public ApiException() {
-        }
-
-        public ApiException(String detailMessage) {
-            super(detailMessage);
-        }
-
-        public ApiException(String detailMessage, Throwable throwable) {
-            super(detailMessage, throwable);
-        }
-
-        public ApiException(Throwable throwable) {
-            super(throwable);
+    private class VoidRequestConsumer extends RequestConsumer<Void> {
+        @Override
+        public Void parseResponse(Response response) {
+            return null;
         }
     }
 }

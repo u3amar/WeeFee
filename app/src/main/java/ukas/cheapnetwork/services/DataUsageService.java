@@ -49,6 +49,12 @@ public class DataUsageService extends Service {
         beginNetworkMonitoring();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkStateChangeReceiver);
+    }
+
     public void beginNetworkMonitoring() {
         final Handler handler = new Handler();
         handler.post(new Runnable() {

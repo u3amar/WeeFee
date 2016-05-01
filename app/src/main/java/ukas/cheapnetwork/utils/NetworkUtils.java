@@ -4,17 +4,44 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.support.annotation.Nullable;
 
 import java.lang.reflect.Method;
 
+import ukas.cheapnetwork.R;
+
 /**
  * Created by usama on 4/29/16.
  */
 public class NetworkUtils {
     private static final String TAG = "NetworkUtils";
+
+    public static boolean isOpenNetwork(ScanResult scanResult) {
+        String capabilities = scanResult.capabilities;
+        return !capabilities.toUpperCase().contains("WEP") && !capabilities.toUpperCase().contains("WPA");
+    }
+
+    public static boolean isConnectedToWeeFeeNetwork(Context context) {
+        String ssid = getSSID(context);
+        return isConnectedToWeeFeeNetwork(ssid, context);
+    }
+
+    public static String getSSID(Context context) {
+        WifiManager wifiManager = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE));
+        String ssid = wifiManager.getConnectionInfo().getSSID();
+        if (ssid == null || ssid.equals("")) {
+            ssid = getWifiApConfiguration(wifiManager).SSID;
+        }
+
+        return ssid;
+    }
+
+    public static boolean isConnectedToWeeFeeNetwork(String SSID, Context context) {
+        return SSID.contains(context.getString(R.string.app_name));
+    }
 
     public static IntentFilter getNetworkStateChangeFilter() {
         IntentFilter networkIntentFilter = new IntentFilter();
