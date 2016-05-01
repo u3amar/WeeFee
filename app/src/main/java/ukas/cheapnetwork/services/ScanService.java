@@ -42,15 +42,25 @@ public class ScanService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (!NetworkUtils.isWifiConnected(mConnectivityManager)) {
-            mWifiManager.startScan();
-            try {
-                connectToNearbyNetwork();
-                onWiFiConnected();
-            } catch (AccessPointConnectionException e) {
-                Log.e(TAG, e.getMessage());
-            }
+            startScan();
         } else {
+            String ssid = mWifiManager.getConnectionInfo().getSSID();
+            if (isDataShareHotspot(ssid)) {
+                onWiFiConnected();
+            } else {
+                mWifiManager.disconnect();
+                startScan();
+            }
+        }
+    }
+
+    private void startScan() {
+        mWifiManager.startScan();
+        try {
+            connectToNearbyNetwork();
             onWiFiConnected();
+        } catch (AccessPointConnectionException e) {
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -62,9 +72,11 @@ public class ScanService extends IntentService {
         mWifiManager.setWifiEnabled(true);
 
         List<ScanResult> scanResults = mWifiManager.getScanResults();
-        for (ScanResult scanResult : scanResults) {
-            if (scanResult.SSID.contains(getString(R.string.app_name)) && isOpenNetwork(scanResult)) {
-                connectToNetwork(scanResult.SSID);
+        if (scanResults != null) {
+            for (ScanResult scanResult : scanResults) {
+                if (isDataShareHotspot(scanResult.SSID) && isOpenNetwork(scanResult)) {
+                    connectToNetwork(scanResult.SSID);
+                }
             }
         }
     }
@@ -87,6 +99,10 @@ public class ScanService extends IntentService {
     public boolean isOpenNetwork(ScanResult scanResult) {
         String capabilities = scanResult.capabilities;
         return !capabilities.toUpperCase().contains("WEP") && !capabilities.toUpperCase().contains("WPA");
+    }
+
+    public boolean isDataShareHotspot(String SSID) {
+        return SSID.contains(getString(R.string.app_name));
     }
 
     public class AccessPointConnectionException extends Exception {

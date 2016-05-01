@@ -6,7 +6,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.lang.reflect.Method;
 
@@ -37,7 +36,6 @@ public class NetworkUtils {
             method.setAccessible(true);
             return (Boolean) method.invoke(wifimanager);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
         }
 
         return false;
@@ -52,7 +50,6 @@ public class NetworkUtils {
             Method method = mWifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
             return (Boolean) method.invoke(mWifiManager, wifiConfig, enabled);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             return false;
         }
     }
@@ -67,7 +64,6 @@ public class NetworkUtils {
             Method method = mWifiManager.getClass().getMethod("getWifiApConfiguration");
             return (WifiConfiguration) method.invoke(mWifiManager);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             return null;
         }
     }
@@ -83,7 +79,6 @@ public class NetworkUtils {
             boolean invokation = (boolean) method.invoke(mWifiManager, wifiConfig);
             return invokation;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             return false;
         }
     }

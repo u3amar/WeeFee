@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">WetWorks</string>
-    <string name="activity_main_become_host">Become Host</string>
+    <string name="activity_main_become_host">Become a Host</string>
     <string name="activity_main_become_receiver">Become Receiver</string>
     <string name="activity_typeInSSID_generatedSSID"/>
     <string name="activity_typeInSSID_goToNetwork">Go to Network Settings</string>
@@ -8,4 +8,7 @@
     <string name="activity_type_in_SSID_hotspot">Hotspot Enabled</string>
     <string name="title_progress_loading">Loading</string>
     <string name="title_progress_please_wait">Please wait...</string>
+    <string name="description_host">Share your hotspot to save money on your monthly bill.</string>
+    <string name="activity_main_connect">Connect</string>
+    <string name="activity_main_connect_description">Find a nearby hotspot</string>
 </resources>
