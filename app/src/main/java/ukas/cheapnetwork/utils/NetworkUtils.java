@@ -1,6 +1,7 @@
 package ukas.cheapnetwork.utils;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
@@ -14,6 +15,13 @@ import java.lang.reflect.Method;
  */
 public class NetworkUtils {
     private static final String TAG = "NetworkUtils";
+
+    public static IntentFilter getNetworkStateChangeFilter() {
+        IntentFilter networkIntentFilter = new IntentFilter();
+        networkIntentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        networkIntentFilter.addAction("android.net.wifi.STATE_CHANGE");
+        return networkIntentFilter;
+    }
 
     @Nullable
     public static String getMacAddress(WifiManager wifiManager) {

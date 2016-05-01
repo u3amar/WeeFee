@@ -42,7 +42,7 @@ public class ApiManager {
 
     public void saveSSIDMapping(SSIDMapping mapping, final NetworkCallback<Void> callback) {
         RequestBody requestBody = new FormBody.Builder()
-                .add("ssid", mapping.getSSID())
+                .add("ssid", mapping.getRawSSID())
                 .add("mac_addr", mapping.getMacAddress())
                 .build();
 
@@ -59,7 +59,7 @@ public class ApiManager {
         SSIDMapping ssidMapping = transmitInfo.getSSIDMapping();
 
         RequestBody requestBody = new FormBody.Builder()
-                .add("ssid", ssidMapping.getSSID())
+                .add("ssid", ssidMapping.getRawSSID())
                 .add("mac_addr", ssidMapping.getMacAddress())
                 .add("uploaded", Long.toString(monitor.getTransferredTransmitInfo().getBytes()))
                 .add("downloaded", Long.toString(monitor.getReceivedTransmitInfo().getBytes()))

@@ -1,18 +1,21 @@
 package ukas.cheapnetwork.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ukas.cheapnetwork.R;
 import ukas.cheapnetwork.services.ScanService;
+import ukas.cheapnetwork.utils.NetworkUtils;
 import ukas.cheapnetwork.utils.Utils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,22 @@ public class MainActivity extends AppCompatActivity {
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
         }
+
+        if (NetworkUtils.isWiFiHotspotOn(this)) {
+            onConnected();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkStateChangeReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initNetworkChangeReceiver();
     }
 
     @SuppressWarnings("unused")
@@ -36,6 +55,25 @@ public class MainActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     @OnClick(R.id.activity_main_become_receiver_button)
     public void onReceiverButtonClicked() {
+        showDefaultProgressDialog();
         ScanService.start(this);
     }
+
+    public void onConnected() {
+        startActivity(new Intent(this, DataGraphActivity.class));
+    }
+
+    public void initNetworkChangeReceiver() {
+        registerReceiver(networkStateChangeReceiver, NetworkUtils.getNetworkStateChangeFilter());
+    }
+
+    private BroadcastReceiver networkStateChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (NetworkUtils.isWifiConnected(context)) {
+                cancelDialog();
+                onConnected();
+            }
+        }
+    };
 }

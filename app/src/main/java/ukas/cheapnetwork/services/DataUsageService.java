@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -65,7 +64,7 @@ public class DataUsageService extends Service {
         mNetworkMonitor.updateTransferBytes();
 
         long dt = System.currentTimeMillis() - mLastUploadTime;
-        if(dt > UPLOAD_INTERVAL_MILLIS) {
+        if (dt > UPLOAD_INTERVAL_MILLIS) {
             syncDataTransfer();
             mLastUploadTime = System.currentTimeMillis();
         }
@@ -90,10 +89,7 @@ public class DataUsageService extends Service {
     }
 
     public void initNetworkChangeReceiver() {
-        IntentFilter networkIntentFilter = new IntentFilter();
-        networkIntentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        networkIntentFilter.addAction("android.net.wifi.STATE_CHANGE");
-        registerReceiver(networkStateChangeReceiver, networkIntentFilter);
+        registerReceiver(networkStateChangeReceiver, NetworkUtils.getNetworkStateChangeFilter());
     }
 
     private BroadcastReceiver networkStateChangeReceiver = new BroadcastReceiver() {

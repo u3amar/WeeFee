@@ -135,6 +135,8 @@ public class SSIDPromptActivity extends BaseActivity {
         mNetworkSettingsTransitionButton.setText(R.string.activity_type_in_SSID_ready_to_go);
         mNetworkSettingsTransitionButton.setEnabled(false);
         mSSIDPromptTextView.setText(R.string.activity_type_in_SSID_hotspot);
+
+        startActivity(new Intent(this, DataGraphActivity.class));
     }
 
     private String generateSSID() {

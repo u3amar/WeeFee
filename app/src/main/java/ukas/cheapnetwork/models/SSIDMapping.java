@@ -15,6 +15,10 @@ public class SSIDMapping {
         return mSSID;
     }
 
+    public String getRawSSID() {
+        return mSSID.replaceAll("\"", "");
+    }
+
     public void setSSID(String mSSID) {
         this.mSSID = mSSID;
     }

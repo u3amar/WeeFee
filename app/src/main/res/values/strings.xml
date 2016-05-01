@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WetWorks</string>
+    <string name="app_name">WeeFee</string>
     <string name="activity_main_become_host">Become a Host</string>
     <string name="activity_main_become_receiver">Become Receiver</string>
     <string name="activity_typeInSSID_generatedSSID"/>

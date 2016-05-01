@@ -13,20 +13,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.6"
-
         android:background="@color/colorWhiteChalk">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/activity_main_become_host_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="bottom|right"
+            android:layout_marginTop="75dp"
             android:src="@mipmap/ic_add_white"
             fab:fab_colorNormal="@color/colorPrimaryDark"
-            fab:fab_colorPressed="@color/colorPrimaryDark"
-            android:layout_marginTop="75dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
+            fab:fab_colorPressed="@color/colorPrimaryDark"/>
 
         <TextView
             android:id="@+id/textView"
@@ -50,9 +49,9 @@
             android:layout_alignStart="@+id/textView"
             android:layout_below="@+id/textView"
             android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-light"
             android:gravity="center_horizontal"
             android:text="@string/description_host"
-            android:fontFamily="sans-serif-light"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
     </RelativeLayout>
 
@@ -76,28 +75,28 @@
             fab:fab_colorPressed="@color/colorPrimaryLightDark"/>
 
         <TextView
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/activity_main_connect"
-            android:id="@+id/textView3"
             android:layout_below="@+id/activity_main_become_receiver_button"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
-            android:textColor="@color/colorWhiteChalk"
-            android:layout_centerHorizontal="true"/>
+            android:text="@string/activity_main_connect"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorWhiteChalk"/>
 
         <TextView
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/activity_main_connect_description"
-            android:layout_marginTop="4dp"
-            android:id="@+id/textView4"
-            android:fontFamily="sans-serif-light"
+            android:layout_below="@+id/textView3"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/colorWhiteChalk"
-            android:layout_below="@+id/textView3"/>
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/activity_main_connect_description"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorWhiteChalk"/>
 
 
     </RelativeLayout>

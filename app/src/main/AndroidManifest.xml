@@ -38,6 +38,8 @@
             android:name=".activities.SSIDPromptActivity"
             android:parentActivityName=".activities.MainActivity">
         </activity>
+        <activity android:name=".activities.DataGraphActivity">
+        </activity>
     </application>
 
 </manifest>
