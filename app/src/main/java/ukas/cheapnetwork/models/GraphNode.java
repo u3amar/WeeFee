@@ -6,7 +6,8 @@ package ukas.cheapnetwork.models;
 public class GraphNode {
     private float x, y;
     private float radius, velX, velY, accelX, accelY;
-    private int data, color;
+    private long data;
+    private int color;
 
     public GraphNode(float x, float y, float radius) {
         this.x = x;
@@ -19,11 +20,11 @@ public class GraphNode {
         return dist < radius + graphNode.getRadius();
     }
 
-    public int getData() {
+    public long getData() {
         return data;
     }
 
-    public void setData(int data) {
+    public void setData(long data) {
         this.data = data;
     }
 

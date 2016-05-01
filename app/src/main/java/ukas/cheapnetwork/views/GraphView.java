@@ -4,10 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 import ukas.cheapnetwork.R;
@@ -24,7 +26,7 @@ public class GraphView extends View {
             MIN_DISTANCE = 100,
             ACCEL_FACTOR = -.005f;
 
-    private Paint mNodePaint, mConnectionPaint;
+    private Paint mNodePaint, mConnectionPaint, mTextPaint;
     private NetworkNode<GraphNode> mRootNode;
     private float mWidth = -1, mHeight = -1;
 
@@ -51,19 +53,23 @@ public class GraphView extends View {
         mConnectionPaint.setColor(Color.BLACK);
         mConnectionPaint.setStrokeWidth(5.0f);
 
+        mTextPaint = new Paint();
+        mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setTextSize(45.0f);
+
         mRootNode = new NetworkNode<>(null);
+        NumberFormat.getInstance().setMaximumFractionDigits(3);
     }
 
     public void addNode(long bytesTransferred) {
-        NetworkNode<GraphNode> child = new NetworkNode<>(mRootNode);
-
-        int childColor = getResources().getColor(R.color.colorAccent);
         GraphNode data = new GraphNode((float) Math.random() * mWidth, (float) Math.random() * mHeight, 50);
-        data.setColor(childColor);
+        data.setColor(getResources().getColor(R.color.colorAccent));
         data.setAccelX(ACCEL_FACTOR);
         data.setAccelY(ACCEL_FACTOR);
-        child.setData(data);
+        data.setData(bytesTransferred);
 
+        NetworkNode<GraphNode> child = new NetworkNode<>(mRootNode);
+        child.setData(data);
         mRootNode.addChild(child);
     }
 
@@ -121,8 +127,15 @@ public class GraphView extends View {
 
         graphNode.setX(newX);
         graphNode.setY(newY);
-
         canvas.drawCircle(graphNode.getX(), graphNode.getY(), NODE_RADIUS, mNodePaint);
+
+        Rect bounds = new Rect();
+        String transferredData = NumberFormat.getInstance().format(getTransferredMB(graphNode.getData())) + " MB";
+        mTextPaint.getTextBounds(transferredData, 0, transferredData.length(), bounds);
+
+        float dataX = graphNode.getX() - bounds.width() / 2;
+        float dataY = graphNode.getY() + bounds.height() / 2;
+        canvas.drawText(transferredData, dataX, dataY, mTextPaint);
     }
 
     @Override
@@ -166,5 +179,9 @@ public class GraphView extends View {
         }
 
         return false;
+    }
+
+    private double getTransferredMB(long bytes) {
+        return bytes / (1024.0 * 1024.0);
     }
 }

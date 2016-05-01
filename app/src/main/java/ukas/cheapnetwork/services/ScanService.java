@@ -43,7 +43,7 @@ public class ScanService extends IntentService {
         if (!NetworkUtils.isWifiConnected(mConnectivityManager)) {
             startScan();
         } else {
-            String ssid = mWifiManager.getConnectionInfo().getSSID();
+            String ssid = NetworkUtils.getSSID(this);
             if (NetworkUtils.isConnectedToWeeFeeNetwork(ssid, this)) {
                 onWiFiConnected();
             } else {

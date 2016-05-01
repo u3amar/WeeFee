@@ -108,8 +108,7 @@ public class SSIDPromptActivity extends BaseActivity {
     }
 
     private boolean isHotspotNameValid() {
-        String currSSID = NetworkUtils.getWifiApConfiguration(mWifiManager).SSID;
-        return currSSID.equals(Preferences.getSavedSSID(this));
+        return NetworkUtils.getSSID(this).equals(Preferences.getSavedSSID(this));
     }
 
     private void onHotspotEnabled() {
