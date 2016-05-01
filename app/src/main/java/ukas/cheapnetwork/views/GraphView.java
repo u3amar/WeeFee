@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import ukas.cheapnetwork.R;
@@ -29,6 +30,7 @@ public class GraphView extends View {
     private Paint mNodePaint, mConnectionPaint, mTextPaint;
     private NetworkNode<GraphNode> mRootNode;
     private float mWidth = -1, mHeight = -1;
+    private List<NetworkNode<GraphNode>> mPrevNodes = new ArrayList<>();
 
     public GraphView(Context context) {
         super(context);
@@ -62,7 +64,18 @@ public class GraphView extends View {
     }
 
     public void addNode(long bytesTransferred) {
-        GraphNode data = new GraphNode((float) Math.random() * mWidth, (float) Math.random() * mHeight, 50);
+        float x = 0, y = 0;
+        if (mPrevNodes.size() > 0) {
+            GraphNode mPrevNode = mPrevNodes.get(0).getData();
+            x = mPrevNode.getX();
+            y = mPrevNode.getY();
+            mPrevNodes.remove(0);
+        } else {
+            x = (float) Math.random() * mWidth;
+            y = (float) Math.random() * mHeight;
+        }
+
+        GraphNode data = new GraphNode(x, y, NODE_RADIUS);
         data.setColor(getResources().getColor(R.color.colorAccent));
         data.setAccelX(ACCEL_FACTOR);
         data.setAccelY(ACCEL_FACTOR);
@@ -71,6 +84,16 @@ public class GraphView extends View {
         NetworkNode<GraphNode> child = new NetworkNode<>(mRootNode);
         child.setData(data);
         mRootNode.addChild(child);
+
+        GraphNode rootNodeData = mRootNode.getData();
+        rootNodeData.setData(rootNodeData.getData() + bytesTransferred);
+    }
+
+    public void clearNodes() {
+        mPrevNodes.addAll(mRootNode.getChildren());
+
+        mRootNode.getChildren().clear();
+        mRootNode.getData().setData(0);
     }
 
     @Override

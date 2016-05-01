@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import ukas.cheapnetwork.R;
 import ukas.cheapnetwork.utils.NetworkUtils;
+import ukas.cheapnetwork.utils.Preferences;
 
 public class DataGraphActivity extends AppCompatActivity {
     @Override
@@ -41,6 +42,7 @@ public class DataGraphActivity extends AppCompatActivity {
             wifiManager.disconnect();
         }
 
+        Preferences.setIsConnected(false, this);
         finish();
     }
 }

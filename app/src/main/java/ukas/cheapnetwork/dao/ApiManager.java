@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -74,6 +75,11 @@ public class ApiManager {
     }
 
     public void getConnectionInfo(String ssid, final NetworkCallback<ConnectionInfo> callback) {
+        if (ssid == null) {
+            callback.onError(HttpURLConnection.HTTP_BAD_REQUEST, new Exception("Invalid SSID"));
+            return;
+        }
+
         ssid = ssid.replaceAll("\"", "");
 
         Request request = new Request.Builder()

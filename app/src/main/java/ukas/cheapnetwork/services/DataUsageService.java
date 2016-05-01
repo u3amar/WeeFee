@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -20,7 +19,7 @@ import ukas.cheapnetwork.utils.NetworkUtils;
  */
 public class DataUsageService extends Service {
     public static final String TAG = "DataUsageService";
-    private final long UPLOAD_INTERVAL_MILLIS = 10 * 1000;
+    public static final long UPLOAD_INTERVAL_MILLIS = 10 * 1000;
 
     private NetworkMonitor mNetworkMonitor;
     private long mLastUploadTime = System.currentTimeMillis();
@@ -45,7 +44,7 @@ public class DataUsageService extends Service {
         super.onCreate();
         initNetworkChangeReceiver();
 
-        mNetworkMonitor = new NetworkMonitor((WifiManager) getSystemService(WIFI_SERVICE));
+        mNetworkMonitor = new NetworkMonitor(this);
         beginNetworkMonitoring();
     }
 

@@ -10,8 +10,10 @@ import android.provider.Settings;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ukas.cheapnetwork.R;
+import ukas.cheapnetwork.services.DataUsageService;
 import ukas.cheapnetwork.services.ScanService;
 import ukas.cheapnetwork.utils.NetworkUtils;
+import ukas.cheapnetwork.utils.Preferences;
 import ukas.cheapnetwork.utils.Utils;
 
 public class MainActivity extends BaseActivity {
@@ -59,6 +61,9 @@ public class MainActivity extends BaseActivity {
     }
 
     public void onConnected() {
+        Preferences.setIsConnected(true, this);
+        DataUsageService.startService(this);
+
         Intent dataGraphActivity = new Intent(this, DataGraphActivity.class);
         startActivity(dataGraphActivity);
         finish();

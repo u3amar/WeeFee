@@ -9,7 +9,8 @@ import android.support.annotation.Nullable;
  */
 public class Preferences {
     private final static String KEY_MAC_ADDRESS = "mac_address_key",
-            SAVED_SSID_KEY = "saved_ssid_key";
+            KEY_SAVED_SSID = "saved_ssid_key",
+            KEY_IS_CONNECTED = "is_connected_key";
 
     public static String getSavedMacAddress(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
@@ -26,13 +27,25 @@ public class Preferences {
     public static void saveSSID(String ssid, Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putString(SAVED_SSID_KEY, ssid)
+                .putString(KEY_SAVED_SSID, ssid)
                 .commit();
     }
 
     @Nullable
     public static String getSavedSSID(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(SAVED_SSID_KEY, null);
+                .getString(KEY_SAVED_SSID, null);
+    }
+
+    public static boolean isConnected(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(KEY_IS_CONNECTED, false);
+    }
+
+    public static void setIsConnected(boolean isConnected, Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(KEY_IS_CONNECTED, isConnected)
+                .commit();
     }
 }
